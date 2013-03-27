@@ -408,6 +408,28 @@
             });
             $.each(listItems, function (index, item) { listToSort.append(item); });
         };
+
+        this.trimHistory = function (numberOfMessagesToKeep) {
+            var lastIndex = null,
+                $messagesToRemove = null,
+                $roomMessages = this.messages.find('li'),
+                messageCount = $roomMessages.length;
+            
+            numberOfMessagesToKeep = numberOfMessagesToKeep || 500;
+
+            if (numberOfMessagesToKeep < 500) {
+                numberOfMessagesToKeep = 500;
+            }
+            
+            if (messageCount < numberOfMessagesToKeep) {
+                return;
+            }
+
+            lastIndex = messageCount - numberOfMessagesToKeep;
+            $messagesToRemove = $roomMessages.filter('li:lt(' + lastIndex + ')');
+
+            $messagesToRemove.remove();
+        };
     }
 
     function getRoomElements(roomName) {
@@ -847,6 +869,7 @@
             loggedOut: 'jabbr.ui.loggedOut',
             reloadMessages: 'jabbr.ui.reloadMessages',
             fileUploaded: 'jabbr.ui.fileUploaded',
+            trimMessageHistory: 'jabbr.ui.trimMessageHistory',
         },
 
         help: {
@@ -2199,6 +2222,14 @@
 
                 return content;
             }
+        },
+        trimRoomMessageHistory: function(roomName) {
+            var room = getRoomElements(roomName);
+
+            // ensure room history should actually be trimmed...
+            // user is idle?
+
+            room.trimHistory();
         }
     };
 
